@@ -16,13 +16,13 @@
 		/// </summary>
 		/// <param name="id">Идентификатор пользователя.</param>
 		/// <returns>возвращает созданного пользователя.</returns>
-		public Users Create(long id = 0)
+		public User Create(long id = 0)
 		{
 			using (var ctx = GetContext())
 			{
 				try
 				{
-					var set = ctx.Set<Users>();
+					var set = ctx.Set<User>();
 					var user = set.FirstOrDefault(u => u.Id == id);
 
 					// Если пользователь с таким идентификатором в базе не найден, создадим нового.
@@ -54,7 +54,7 @@
 		/// </summary>
 		/// <param name="users">Массив пользователей.</param>
 		/// <returns>Возвращает количество удаленных записей.</returns>
-		public int Remove(params Users[] users)
+		public int Remove(params User[] users)
 		{
 			if (users == null) return 0;
 
@@ -62,7 +62,7 @@
 			{
 				try
 				{
-					var set = ctx.Set<Users>();
+					var set = ctx.Set<User>();
 					var filteredUsers = users.Where(u => u != null && u.Id > 0).ToArray();
 
 					foreach (var user in filteredUsers)

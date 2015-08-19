@@ -54,10 +54,10 @@
           <Property Name="Latitude" Type="Decimal" Nullable="false" Scale="6" Precision="9" />
           <Property Name="Longtitude" Type="Decimal" Nullable="false" Precision="9" Scale="6" />
           <Property Name="UsersId" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Users" Relationship="Self.FK_UsersCoordinates" FromRole="Coordinates" ToRole="Users" />
+          <NavigationProperty Name="User" Relationship="Self.FK_UsersCoordinates" FromRole="Coordinates" ToRole="Users" />
           <Property Name="Date" Type="DateTime" Nullable="false" />
         </EntityType>
-        <EntityType Name="Users">
+        <EntityType Name="User">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -66,7 +66,7 @@
           <NavigationProperty Name="Coordinates" Relationship="Self.FK_UsersCoordinates" FromRole="Users" ToRole="Coordinates" />
         </EntityType>
         <Association Name="FK_UsersCoordinates">
-          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Users" Type="LocalDbModel.User" Multiplicity="1" />
           <End Role="Coordinates" Type="Self.Coordinates" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
@@ -77,9 +77,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="LocalDbEntities" annotation:LazyLoadingEnabled="false">
+        <EntityContainer Name="LocalDbEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Coordinates" EntityType="Self.Coordinates" />
-          <EntitySet Name="Users" EntityType="Self.Users" />
+          <EntitySet Name="Users" EntityType="LocalDbModel.User" />
           <AssociationSet Name="FK_UsersCoordinates" Association="Self.FK_UsersCoordinates">
             <End Role="Users" EntitySet="Users" />
             <End Role="Coordinates" EntitySet="Coordinates" />
@@ -103,7 +103,7 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="Users">
-      <EntityTypeMapping TypeName="IsTypeOf(LocalDbModel.Users)">
+      <EntityTypeMapping TypeName="IsTypeOf(LocalDbModel.User)">
         <MappingFragment StoreEntitySet="Users">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Password" ColumnName="Password" />

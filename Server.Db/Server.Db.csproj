@@ -95,7 +95,7 @@
     </Compile>
     <Compile Include="Models\BaseDb.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Users.cs">
+    <Compile Include="User.cs">
       <DependentUpon>LocalModel.tt</DependentUpon>
     </Compile>
   </ItemGroup>

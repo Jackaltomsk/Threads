@@ -12,10 +12,10 @@ namespace Server.Db
     using System;
     using System.Collections.Generic;
     using Server.Db.Models;
-    public partial class Users : BaseDb
+    public partial class User : BaseDb
     {
     	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-    	public Users()
+    	public User()
     	{
     		this.Coordinates = new HashSet<Coordinates>();
     	}

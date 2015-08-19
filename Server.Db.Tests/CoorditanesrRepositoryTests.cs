@@ -1,7 +1,6 @@
 ﻿namespace Server.Db.Tests
 {
 	using System;
-	using System.Data.Entity.Spatial;
 
 	using NUnit.Framework;
 

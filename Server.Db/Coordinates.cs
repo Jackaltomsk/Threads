@@ -20,6 +20,6 @@ namespace Server.Db
     	public long UsersId { get; set; }
     	public System.DateTime Date { get; set; }
     
-    	public virtual Users Users { get; set; }
+    	public virtual User User { get; set; }
     }
 }

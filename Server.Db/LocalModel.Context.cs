@@ -18,7 +18,6 @@ namespace Server.Db
         public LocalDbEntities()
             : base("name=LocalDbEntities")
         {
-            this.Configuration.LazyLoadingEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -27,6 +26,6 @@ namespace Server.Db
         }
     
         public virtual DbSet<Coordinates> Coordinates { get; set; }
-        public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     }
 }
