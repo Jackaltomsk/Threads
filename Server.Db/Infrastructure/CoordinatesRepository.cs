@@ -1,7 +1,10 @@
 ﻿namespace Server.Db.Infrastructure
 {
 	using System;
+	using System.Data.Entity.Validation;
 	using System.Linq;
+
+	using Logging;
 
 	/// <summary>
 	/// Репозиторий координат.
@@ -17,10 +20,22 @@
 		{
 			using (var ctx = GetContext())
 			{
-				var set = ctx.Set<Coordinates>();
-				set.AddRange(coordinates.Where(c => c != null));
+				try
+				{
+					var set = ctx.Set<Coordinates>();
+					set.AddRange(coordinates.Where(c => c != null));
 
-				return ctx.SaveChanges();
+					return ctx.SaveChanges();
+				}
+				catch (DbEntityValidationException)
+				{
+					var errors = ctx.GetValidationErrors().ToList();
+
+					errors.ForEach(e => e.ValidationErrors.ToList()
+						.ForEach(r => Logger.Error(string.Format("Ошибка валидации модели: сущность {0}, свойство {1}, ошибка {2}", e.Entry.Entity, r.PropertyName, r.ErrorMessage))));
+
+					throw;
+				}
 			}
 		}
 
@@ -31,14 +46,29 @@
 		/// <param name="intervalStart">Начало временного интервала.</param>
 		/// <param name="intervalEnd">Конец временного интервала.</param>
 		/// <returns>Возвращает координаты, удовлетворяющие запросу.</returns>
-		public Coordinates[] Get(long id, DateTime intervalStart, DateTime intervalEnd)
+		public Coordinates[] Get(long id, DateTime? intervalStart = null, DateTime? intervalEnd = null)
 		{
 			using (var ctx = GetContext())
 			{
-				var set = ctx.Set<Coordinates>();
-				var coords = set.Where(c => c.UsersId == id && (c.Date >= intervalStart && c.Date <= intervalEnd)).ToArray();
+				try
+				{
+					var set = ctx.Set<Coordinates>();
+					intervalStart = intervalStart ?? DateTime.MinValue;
+					intervalEnd = intervalEnd ?? DateTime.MaxValue;
 
-				return coords;
+					var coords = set.Where(c => c.UsersId == id && (c.Date >= intervalStart && c.Date <= intervalEnd)).ToArray();
+
+					return coords;
+				}
+				catch (DbEntityValidationException)
+				{
+					var errors = ctx.GetValidationErrors().ToList();
+
+					errors.ForEach(e => e.ValidationErrors.ToList()
+						.ForEach(r => Logger.Error(string.Format("Ошибка валидации модели: сущность {0}, свойство {1}, ошибка {2}", e.Entry.Entity, r.PropertyName, r.ErrorMessage))));
+
+					throw;
+				}
 			}
 		}
 
@@ -53,18 +83,30 @@
 
 			using (var ctx = GetContext())
 			{
-				var set = ctx.Set<Coordinates>();
-				var filteredCoords = coordinates.Where(u => u != null && u.Id > 0).ToArray();
-
-				foreach (var coords in filteredCoords)
+				try
 				{
-					set.Attach(coords);
+					var set = ctx.Set<Coordinates>();
+					var filteredCoords = coordinates.Where(u => u != null && u.Id > 0).ToArray();
+
+					foreach (var coords in filteredCoords)
+					{
+						set.Attach(coords);
+					}
+
+					set.RemoveRange(filteredCoords);
+					ctx.SaveChanges();
+
+					return filteredCoords.Length;
 				}
+				catch (DbEntityValidationException)
+				{
+					var errors = ctx.GetValidationErrors().ToList();
 
-				set.RemoveRange(filteredCoords);
-				ctx.SaveChanges();
+					errors.ForEach(e => e.ValidationErrors.ToList()
+						.ForEach(r => Logger.Error(string.Format("Ошибка валидации модели: сущность {0}, свойство {1}, ошибка {2}", e.Entry.Entity, r.PropertyName, r.ErrorMessage))));
 
-				return filteredCoords.Length;
+					throw;
+				}
 			}
 		}
 	}

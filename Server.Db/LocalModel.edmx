@@ -18,8 +18,8 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Latitude" Type="geography" Nullable="false" SRID="4326" />
-    <Property Name="Longtitude" Type="geography" Nullable="false" SRID="4326" />
+    <Property Name="Latitude" Type="decimal" Nullable="false" Precision="9" Scale="6" />
+    <Property Name="Longtitude" Type="decimal" Nullable="false" Precision="9" Scale="6" />
     <Property Name="UsersId" Type="bigint" Nullable="false" />
     <Property Name="Date" Type="datetime" Nullable="false" />
   </EntityType>
@@ -51,8 +51,8 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Latitude" Type="Geography" Nullable="false" />
-          <Property Name="Longtitude" Type="Geography" Nullable="false" />
+          <Property Name="Latitude" Type="Decimal" Nullable="false" Scale="6" Precision="9" />
+          <Property Name="Longtitude" Type="Decimal" Nullable="false" Precision="9" Scale="6" />
           <Property Name="UsersId" Type="Int64" Nullable="false" />
           <NavigationProperty Name="Users" Relationship="Self.FK_UsersCoordinates" FromRole="Coordinates" ToRole="Users" />
           <Property Name="Date" Type="DateTime" Nullable="false" />

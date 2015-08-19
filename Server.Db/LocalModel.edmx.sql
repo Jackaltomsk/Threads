@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/19/2015 15:17:31
+-- Date Created: 08/19/2015 17:13:48
 -- Generated from EDMX file: D:\projects\Test\Server.Db\LocalModel.edmx
 -- --------------------------------------------------
 
@@ -39,8 +39,8 @@ GO
 -- Creating table 'Coordinates'
 CREATE TABLE [dbo].[Coordinates] (
     [Id] bigint IDENTITY(1,1) NOT NULL,
-    [Latitude] geography  NOT NULL,
-    [Longtitude] geography  NOT NULL,
+    [Latitude] decimal(9,6)  NOT NULL,
+    [Longtitude] decimal(9,6)  NOT NULL,
     [UsersId] bigint  NOT NULL,
     [Date] datetime  NOT NULL
 );

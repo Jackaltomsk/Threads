@@ -15,8 +15,8 @@ namespace Server.Db
     public partial class Coordinates : BaseDb
     {
     	public override long Id { get; set; }
-    	public System.Data.Entity.Spatial.DbGeography Latitude { get; set; }
-    	public System.Data.Entity.Spatial.DbGeography Longtitude { get; set; }
+    	public decimal Latitude { get; set; }
+    	public decimal Longtitude { get; set; }
     	public long UsersId { get; set; }
     	public System.DateTime Date { get; set; }
     
