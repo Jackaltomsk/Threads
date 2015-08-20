@@ -1,6 +1,5 @@
 ﻿namespace Server.Db.Infrastructure
 {
-	using System;
 	using System.Data.Entity;
 
 	using global::IoC;
