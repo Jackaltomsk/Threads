@@ -4,12 +4,22 @@
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.Net.Http;
+	using System.Threading.Tasks;
+
+	using Client.Formatters;
+
+	using Dto.Converters;
 
 	/// <summary>
 	/// Абстрактный класс команды-запроса к сервису.
 	/// </summary>
-	internal abstract class BaseApiCommand : BaseCommand
+	internal abstract class BaseApiCommand
 	{
+		/// <summary>
+		/// Слово команды.
+		/// </summary>
+		protected string _verb;
+		
 		/// <summary>
 		/// Типы в аргументах.
 		/// </summary>
@@ -31,43 +41,65 @@
 		protected string _queryFormat;
 
 		/// <summary>
+		/// Метод запроса.
+		/// </summary>
+		protected RequestMethod _method = RequestMethod.GET;
+
+		/// <summary>
+		/// Параметры для отправки.
+		/// </summary>
+		protected object _bodyParameters;
+
+		/// <summary>
+		/// Проверяет, валидна ли команда для данного запроса.
+		/// </summary>
+		/// <param name="verb">Запрос команды.</param>
+		/// <returns>Возвращает признак валидности команды для запроса.</returns>
+		protected bool IsValid(string verb)
+		{
+			return _verb == verb;
+		}
+		
+		/// <summary>
 		/// Реализует парсинг команды. При успешном парсинге аргументы помещаются в
 		/// </summary>
 		/// <param name="args">Аргументы команды.</param>
-		/// <returns>Возвращает массив валидационных ошибок.</returns>
+		/// <returns>Возвращает признак того, что команда распознана.</returns>
 		public bool ParseArgs(string[] args)
 		{
 			// Проверяем, подходит ли команда по основным параметрам.
-			if (args.Length != _argumentTypes.Length) return false;
+			if (args.Length != _argumentTypes.Length + 1) return false;
 
 			if (!IsValid(args[0])) return false;
 
-			for (int i = 1; i < _argumentTypes.Length; i++)
+			_commandArguments.Clear();
+
+			for (int i = 0; i < _argumentTypes.Length; i++)
 			{
 				switch (_argumentTypes[i].Name)
 				{
 					case "String":
 					{
-						_commandArguments.Add(args[i]);
+						_commandArguments.Add(args[i + 1]);
 						break;
 					}
 					case "Int32" :
 					{
 						int outInt;
-						var parsed = Int32.TryParse(args[i], out outInt);
+						var parsed = Int32.TryParse(args[i + 1], out outInt);
 
 						if (parsed)
-							_commandArguments.Add(args[i]);
+							_commandArguments.Add(args[i + 1]);
 
 						break;
 					}
 					case "DateTime":
 					{
 						DateTime dt;
-						var parsed = DateTime.TryParseExact(args[i], "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
+						var parsed = DateTime.TryParseExact(args[i + 1], DateTimeConverter.DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
 
 						if (parsed)
-							_commandArguments.Add(args[i]);
+							_commandArguments.Add(DateTimeConverter.Convert(dt));
 
 						break;
 					}
@@ -78,7 +110,15 @@
 				}
 			}
 
-			return args.Length == _commandArguments.Count;
+			return _argumentTypes.Length == _commandArguments.Count;
+		}
+
+		/// <summary>
+		/// Метод дополнительной логики.
+		/// </summary>
+		public virtual void PerformAdditionalLogic()
+		{
+			return;
 		}
 
 		/// <summary>
@@ -93,9 +133,38 @@
 			using (var client = new HttpClient())
 			{
 				client.BaseAddress = new Uri(new Uri(baseAdress), query);
-				var response = client.GetAsync(client.BaseAddress).Result;
+				
+				Task<HttpResponseMessage> response;
 
-				var data = response.Content.ReadAsAsync(_returnType).Result;
+				switch (_method)
+				{
+					case RequestMethod.GET:
+					{
+						response = client.GetAsync(client.BaseAddress);
+						break;
+					}
+					case RequestMethod.POST:
+					{
+						response = client.PostAsync(client.BaseAddress, _bodyParameters, FormatterFactory.CreateJsonFormatter());
+						break;
+					}
+					case RequestMethod.PUT:
+					{
+						response = client.PutAsync(client.BaseAddress, _bodyParameters, FormatterFactory.CreateJsonFormatter());
+						break;
+					}
+					case RequestMethod.DELETE:
+					{
+						response = client.DeleteAsync(client.BaseAddress);
+						break;
+					}
+					default:
+					{
+						throw new NotImplementedException("Не реализована обработка типа: " + _method);
+					}
+				}
+
+				var data = response.ContinueWith(t =>t.Result.Content.ReadAsAsync(_returnType, new[] { FormatterFactory.CreateJsonFormatter() })).Result.Result;
 				return this.ReturnTypeToString(data);
 			}
 		}
@@ -106,5 +175,10 @@
 		/// <param name="data">Ответ сервера.</param>
 		/// <returns>Возвращает массив строковых представлений ответа сервера.</returns>
 		protected abstract string[] ReturnTypeToString(object data);
+
+		public override string ToString()
+		{
+			return _verb;
+		}
 	}
 }

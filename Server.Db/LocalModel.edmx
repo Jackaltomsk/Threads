@@ -53,7 +53,7 @@
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Latitude" Type="Decimal" Nullable="false" Scale="6" Precision="9" />
           <Property Name="Longtitude" Type="Decimal" Nullable="false" Precision="9" Scale="6" />
-          <Property Name="UsersId" Type="Int64" Nullable="false" />
+          <Property Name="UserId" Type="Int64" Nullable="false" />
           <NavigationProperty Name="User" Relationship="Self.FK_UsersCoordinates" FromRole="Coordinates" ToRole="Users" />
           <Property Name="Date" Type="DateTime" Nullable="false" />
         </EntityType>
@@ -73,11 +73,11 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Coordinates">
-              <PropertyRef Name="UsersId" />
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="LocalDbEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="LocalDbEntities" annotation:LazyLoadingEnabled="false">
           <EntitySet Name="Coordinates" EntityType="Self.Coordinates" />
           <EntitySet Name="Users" EntityType="LocalDbModel.User" />
           <AssociationSet Name="FK_UsersCoordinates" Association="Self.FK_UsersCoordinates">
@@ -97,7 +97,7 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longtitude" ColumnName="Longtitude" />
-          <ScalarProperty Name="UsersId" ColumnName="UsersId" />
+          <ScalarProperty Name="UserId" ColumnName="UsersId" />
           <ScalarProperty Name="Date" ColumnName="Date" />
         </MappingFragment>
       </EntityTypeMapping>

@@ -5,9 +5,10 @@
 	using System.Linq;
 
 	using Dto;
+	using Dto.Converters;
 
 	/// <summary>
-	/// Команда запроса времени с сервера.
+	/// Команда запроса истории GPS с сервера.
 	/// </summary>
 	internal class HistoryCommand : BaseApiCommand
 	{
@@ -16,8 +17,26 @@
 			this._argumentTypes = new[] { typeof(int), typeof(DateTime), typeof(DateTime) };
 			this._verb = "history";
 			_commandArguments = new List<string>(_argumentTypes.Length);
-			_queryFormat = "/api/coordinates/{0}/{1}/{2}";
+			_queryFormat = "/api/coordinates/history/get";
 			_returnType = typeof(CoordinatesDto[]);
+			_method = RequestMethod.POST;
+		}
+
+		public override void PerformAdditionalLogic()
+		{
+			_bodyParameters = CreateRequestParameter();
+		}
+
+		private object CreateRequestParameter()
+		{
+			var historyDto = new HistoryCoordinatesDto
+							{
+								UserId = int.Parse(_commandArguments[0]),
+								StartDate = DateTimeConverter.Convert(_commandArguments[1]),
+								EndDate = DateTimeConverter.Convert(_commandArguments[2])
+							};
+
+			return historyDto;
 		}
 
 		protected override string[] ReturnTypeToString(object data)

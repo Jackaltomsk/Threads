@@ -17,7 +17,7 @@ namespace Server.Db
     	public override long Id { get; set; }
     	public decimal Latitude { get; set; }
     	public decimal Longtitude { get; set; }
-    	public long UsersId { get; set; }
+    	public long UserId { get; set; }
     	public System.DateTime Date { get; set; }
     
     	public virtual User User { get; set; }

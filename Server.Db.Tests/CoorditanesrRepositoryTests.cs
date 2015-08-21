@@ -17,7 +17,7 @@
 
 			var user = usersRep.Create();
 
-			var coords = new Coordinates { UsersId = user.Id, Date = DateTime.Now };
+			var coords = new Coordinates { UserId = user.Id, Date = DateTime.Now };
 			var putCount = coordsRep.Put(coords);
 
 			try

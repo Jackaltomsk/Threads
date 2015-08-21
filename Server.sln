@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Service.Windows", "Server.Service.Windows\Server.Service.Windows.csproj", "{B6114D98-6E31-4350-AEB7-98394286242C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{9FD89392-89DD-4ACA-AE9F-668A25641209}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Db", "Server.Db\Server.Db.csproj", "{E602E82C-3671-40EB-9ECD-D2195D70E220}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "Logging\Logging.csproj", "{8B68908B-13E9-46EF-B35B-7CF8949CDF0F}"
@@ -42,10 +40,6 @@ Global
 		{B6114D98-6E31-4350-AEB7-98394286242C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6114D98-6E31-4350-AEB7-98394286242C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6114D98-6E31-4350-AEB7-98394286242C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9FD89392-89DD-4ACA-AE9F-668A25641209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9FD89392-89DD-4ACA-AE9F-668A25641209}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9FD89392-89DD-4ACA-AE9F-668A25641209}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9FD89392-89DD-4ACA-AE9F-668A25641209}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E602E82C-3671-40EB-9ECD-D2195D70E220}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E602E82C-3671-40EB-9ECD-D2195D70E220}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E602E82C-3671-40EB-9ECD-D2195D70E220}.Release|Any CPU.ActiveCfg = Release|Any CPU

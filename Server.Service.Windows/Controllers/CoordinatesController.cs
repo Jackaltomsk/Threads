@@ -1,6 +1,8 @@
 ﻿namespace Server.Service.Windows.Controllers
 {
 	using System;
+	using System.Collections.Generic;
+	using System.Linq;
 	using System.Web.Http;
 
 	using AutoMapper;
@@ -29,11 +31,15 @@
 		/// <summary>
 		/// Реализует добавление записи координат в БД.
 		/// </summary>
+		/// <param name="coordsDto">Координаты для добавления.</param>
 		/// <returns>Возвращает сущность пользователя.</returns>
 		[HttpPut]
 		[Route("put")]
 		public IHttpActionResult Create([FromBody]CoordinatesDto coordsDto)
 		{
+			if (coordsDto == null)
+				return BadRequest("Не передан необходимый параметр.");
+			
 			try
 			{
 				var coords = Mapper.Map<Coordinates>(coordsDto);
@@ -43,29 +49,33 @@
 			catch (Exception ex)
 			{
 				Logging.Logger.Error("Ошибка добавления координат.", ex);
-				return InternalServerError(ex);
+				return InternalServerError();
 			}
 		}
 
 		/// <summary>
-		/// Реализует добавление записи координат в БД.
+		/// Реализует получение истории координат.
 		/// </summary>
+		/// <param name="requetsDto">Параметры запроса истории координат.</param>
 		/// <returns>Возвращает сущность пользователя.</returns>
-		[HttpGet]
-		[Route("{id:long}/{start:DateTime?}/{end:DateTime?}")]
-		public IHttpActionResult Get(long id, DateTime? start, DateTime? end)
+		[HttpPost]
+		[Route("history/get")]
+		public IHttpActionResult History([FromBody]HistoryCoordinatesDto requetsDto)
 		{
+			if (requetsDto == null)
+				return BadRequest("Не передан необходимый параметр.");
+
 			try
 			{
-				var coords = _rep.Get(id, start, end);
-				var coordsdto = Mapper.Map<Coordinates[]>(coords);
+				var coords = _rep.Get(requetsDto.UserId, requetsDto.StartDate, requetsDto.EndDate);
+				var coordsDto = coords.Select(Mapper.Map<CoordinatesDto>).ToArray();
 
-				return Ok(coordsdto);
+				return Ok(coordsDto);
 			}
 			catch (Exception ex)
 			{
-				Logging.Logger.Error("Ошибка добавления координат.", ex);
-				return InternalServerError(ex);
+				Logging.Logger.Error("Ошибка получения координат.", ex);
+				return InternalServerError();
 			}
 		}
 	}

@@ -56,7 +56,7 @@
 					intervalStart = intervalStart ?? DateTime.MinValue;
 					intervalEnd = intervalEnd ?? DateTime.MaxValue;
 
-					var coords = set.Where(c => c.UsersId == id && (c.Date >= intervalStart && c.Date <= intervalEnd)).ToArray();
+					var coords = set.Where(c => c.UserId == id && (c.Date >= intervalStart && c.Date <= intervalEnd)).ToArray();
 
 					return coords;
 				}

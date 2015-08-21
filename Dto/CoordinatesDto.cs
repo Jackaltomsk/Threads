@@ -2,6 +2,8 @@ namespace Dto
 {
 	using System;
 
+	using Dto.Converters;
+
 	using ProtoBuf;
 
 	/// <summary>
@@ -26,18 +28,17 @@ namespace Dto
 		/// Идентификатор загружающего пользователя.
 		/// </summary>
 		[ProtoMember(3)]
-		public long UsersId { get; set; }
+		public long UserId { get; set; }
 		
 		/// <summary>
 		/// Дата загрузки.
 		/// </summary>
 		[ProtoMember(4)]
 		public DateTime Date { get; set; }
-	
-		/// <summary>
-		/// Сущность пользователя.
-		/// </summary>
-		[ProtoMember(5, AsReference = true)]
-		public virtual UserDto User { get; set; }
+
+		public override string ToString()
+		{
+			return string.Format("Lat: {0}, Long: {1}, Date: {2}", Latitude, Longtitude, DateTimeConverter.Convert(Date));
+		}
 	}
 }
