@@ -16,7 +16,7 @@
 			try
 			{
 				Assert.That(user.Id, Is.GreaterThan(0));
-				var changedUser = userRep.Create(user.Id);
+				var changedUser = userRep.Create(user.Name);
 				
 				Assert.That(changedUser.Id, Is.EqualTo(user.Id));
 				Assert.That(changedUser.Password, Is.Not.EqualTo(user.Password));

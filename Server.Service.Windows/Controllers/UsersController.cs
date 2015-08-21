@@ -31,8 +31,8 @@
 		/// <param name="id">Идентификатор пользователя, у которого следует обновить пароль.</param>
 		/// <returns>Возвращает сущность пользователя.</returns>
 		[HttpGet]
-		[Route("create/{id:long?}")]
-		public IHttpActionResult Create(long id = 0)
+		[Route("create/{id:int?}")]
+		public IHttpActionResult Create(int id = 0)
 		{
 			try
 			{

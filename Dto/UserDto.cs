@@ -16,6 +16,11 @@ namespace Dto
 		[ProtoMember(1)]
 		public Guid Password { get; set; }
 
+		/// <summary>
+		/// Номер пользователя.
+		/// </summary>
+		public int Name { get; set; }
+
 		public override string ToString()
 		{
 			return string.Format("{0}, {1}", Id, Password);

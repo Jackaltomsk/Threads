@@ -16,14 +16,14 @@
 		/// </summary>
 		/// <param name="id">Идентификатор пользователя.</param>
 		/// <returns>возвращает созданного пользователя.</returns>
-		public User Create(long id = 0)
+		public User Create(int id = 0)
 		{
 			using (var ctx = GetContext())
 			{
 				try
 				{
 					var set = ctx.Set<User>();
-					var user = set.FirstOrDefault(u => u.Id == id);
+					var user = set.FirstOrDefault(u => u.Name == id);
 
 					// Если пользователь с таким идентификатором в базе не найден, создадим нового.
 					if (user == null) user = set.Create();

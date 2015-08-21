@@ -64,6 +64,7 @@
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Password" Type="Guid" Nullable="false" />
           <NavigationProperty Name="Coordinates" Relationship="Self.FK_UsersCoordinates" FromRole="Users" ToRole="Coordinates" />
+          <Property Name="Name" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_UsersCoordinates">
           <End Role="Users" Type="LocalDbModel.User" Multiplicity="1" />
