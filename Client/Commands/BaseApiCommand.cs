@@ -164,9 +164,17 @@
 					}
 				}
 
-				var data = response.ContinueWith(t =>t.Result.Content.ReadAsAsync(_returnType, new[] { FormatterFactory.CreateJsonFormatter() })).Result.Result;
+				var data = response.ContinueWith(t =>t.Result.Content.ReadAsAsync(_returnType, new[] { FormatterFactory.CreateJsonFormatter() }).Result).Result;
 				return this.ReturnTypeToString(data);
 			}
+		}
+
+		/// <summary>
+		/// Реализует останов команды.
+		/// </summary>
+		public virtual void Stop()
+		{
+			return;
 		}
 
 		/// <summary>

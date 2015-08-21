@@ -62,7 +62,6 @@
     <Compile Include="Commands\HistoryCommand.cs" />
     <Compile Include="Commands\ServerTimeCommand.cs" />
     <Compile Include="Formatters\FormatterFactory.cs" />
-    <Compile Include="IoC\CancellationTokenRoot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestMethod.cs" />
@@ -79,6 +78,10 @@
     <ProjectReference Include="..\IoC\IoC.csproj">
       <Project>{B3B10535-24BA-4511-998D-F0628BAC4D70}</Project>
       <Name>IoC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{8B68908B-13E9-46EF-B35B-7CF8949CDF0F}</Project>
+      <Name>Logging</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

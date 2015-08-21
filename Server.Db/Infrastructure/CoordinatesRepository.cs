@@ -42,11 +42,11 @@
 		/// <summary>
 		/// Реализует получение координат из БД с учетом переданного интервала времени и идентификатора пользователя.
 		/// </summary>
-		/// <param name="id">Идентификатор пользователя.</param>
+		/// <param name="name">Имя пользователя.</param>
 		/// <param name="intervalStart">Начало временного интервала.</param>
 		/// <param name="intervalEnd">Конец временного интервала.</param>
 		/// <returns>Возвращает координаты, удовлетворяющие запросу.</returns>
-		public Coordinates[] Get(long id, DateTime? intervalStart = null, DateTime? intervalEnd = null)
+		public Coordinates[] Get(int name, DateTime? intervalStart = null, DateTime? intervalEnd = null)
 		{
 			using (var ctx = GetContext())
 			{
@@ -56,7 +56,7 @@
 					intervalStart = intervalStart ?? DateTime.MinValue;
 					intervalEnd = intervalEnd ?? DateTime.MaxValue;
 
-					var coords = set.Where(c => c.UserId == id && (c.Date >= intervalStart && c.Date <= intervalEnd)).ToArray();
+					var coords = set.Where(c => c.User.Name == name && (c.Date >= intervalStart && c.Date <= intervalEnd)).ToArray();
 
 					return coords;
 				}

@@ -67,7 +67,7 @@
 
 			try
 			{
-				var coords = _rep.Get(requetsDto.UserId, requetsDto.StartDate, requetsDto.EndDate);
+				var coords = _rep.Get(requetsDto.UserName, requetsDto.StartDate, requetsDto.EndDate);
 				var coordsDto = coords.Select(Mapper.Map<CoordinatesDto>).ToArray();
 
 				return Ok(coordsDto);

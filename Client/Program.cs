@@ -23,37 +23,33 @@
 				var created = (BaseApiCommand)Activator.CreateInstance(cmm);
 				createdCommands.Add(created);
 			}
-
-			//var container = LightInjectCore.Get();
-			//var scope = container.BeginScope();
+			
 			
 			Console.WriteLine("Введите команду:");
 			var input = string.Empty;
+			BaseApiCommand currentCommand = null;
 
 			while ((input = Console.ReadLine()) != "exit")
 			{
-
 				try
 				{
 					if (input == "stop")
 					{
-						var container = LightInjectCore.Get();
-						var tokenSource = container.GetInstance<CancellationTokenSource>();
-						tokenSource.Cancel();
-						Console.WriteLine("Выполнение остановлено.");
-
-						//scope.Dispose();
-						//scope = container.BeginScope();
+						if (currentCommand is ImitationCommand)
+						{
+							currentCommand.Stop();
+							Console.WriteLine("Выполнение имитации остановлено.");
+						}
 					}
 					else
 					{
 						var splittedIinput = input.Split(' ');
-						var command = createdCommands.FirstOrDefault(c => c.ParseArgs(splittedIinput));
+						currentCommand = createdCommands.FirstOrDefault(c => c.ParseArgs(splittedIinput));
 
-						if (command != null)
+						if (currentCommand != null)
 						{
-							command.PerformAdditionalLogic();
-							var data = command.ProcessRequest("http://localhost:9000");
+							currentCommand.PerformAdditionalLogic();
+							var data = currentCommand.ProcessRequest("http://localhost:9000");
 
 							foreach (var str in data)
 							{

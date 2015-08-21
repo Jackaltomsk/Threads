@@ -11,10 +11,10 @@ namespace Dto
 	public class HistoryCoordinatesDto : BaseDto
 	{
 		/// <summary>
-		/// Идентификатор загружающего пользователя.
+		/// Имя загружающего пользователя.
 		/// </summary>
 		[ProtoMember(1)]
-		public long UserId { get; set; }
+		public int UserName { get; set; }
 		
 		/// <summary>
 		/// Начало временного интервала.

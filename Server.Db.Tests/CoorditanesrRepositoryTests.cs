@@ -15,7 +15,7 @@
 			var coordsRep = new CoordinatesRepository();
 			var usersRep = new UsersRepository();
 
-			var user = usersRep.Create();
+			var user = usersRep.Create(1);
 
 			var coords = new Coordinates { UserId = user.Id, Date = DateTime.Now };
 			var putCount = coordsRep.Put(coords);
@@ -25,7 +25,7 @@
 				Assert.That(putCount, Is.EqualTo(1));
 				Assert.That(coords.Id, Is.GreaterThan(0));
 
-				var getted = coordsRep.Get(user.Id);
+				var getted = coordsRep.Get(user.Name);
 
 				Assert.That(getted.Length, Is.EqualTo(1));
 				Assert.That(getted[0].Id, Is.EqualTo(coords.Id));

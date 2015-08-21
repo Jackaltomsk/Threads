@@ -11,11 +11,12 @@
 		public void UserCreation()
 		{
 			var userRep = new UsersRepository();
-			var user = userRep.Create();
+			var user = userRep.Create(1);
 
 			try
 			{
 				Assert.That(user.Id, Is.GreaterThan(0));
+				Assert.That(user.Name, Is.EqualTo(1));
 				var changedUser = userRep.Create(user.Name);
 				
 				Assert.That(changedUser.Id, Is.EqualTo(user.Id));

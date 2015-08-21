@@ -20,7 +20,7 @@
     <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Latitude" Type="decimal" Nullable="false" Precision="9" Scale="6" />
     <Property Name="Longtitude" Type="decimal" Nullable="false" Precision="9" Scale="6" />
-    <Property Name="UsersId" Type="bigint" Nullable="false" />
+    <Property Name="UserId" Type="bigint" Nullable="false" />
     <Property Name="Date" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Users">
@@ -29,6 +29,7 @@
     </Key>
     <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Password" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Name" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="FK_UsersCoordinates">
     <End Role="Users" Type="LocalDbModel.Store.Users" Multiplicity="1" />
@@ -38,7 +39,7 @@
         <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="Coordinates">
-        <PropertyRef Name="UsersId" />
+        <PropertyRef Name="UserId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -55,7 +56,7 @@
           <Property Name="Longtitude" Type="Decimal" Nullable="false" Precision="9" Scale="6" />
           <Property Name="UserId" Type="Int64" Nullable="false" />
           <NavigationProperty Name="User" Relationship="Self.FK_UsersCoordinates" FromRole="Coordinates" ToRole="Users" />
-          <Property Name="Date" Type="DateTime" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -98,7 +99,7 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Latitude" ColumnName="Latitude" />
           <ScalarProperty Name="Longtitude" ColumnName="Longtitude" />
-          <ScalarProperty Name="UserId" ColumnName="UsersId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="Date" ColumnName="Date" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -108,6 +109,7 @@
         <MappingFragment StoreEntitySet="Users">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

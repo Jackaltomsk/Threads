@@ -14,20 +14,21 @@
 		/// <summary>
 		/// Реализует создание пользователя.
 		/// </summary>
-		/// <param name="id">Идентификатор пользователя.</param>
+		/// <param name="name">Идентификатор пользователя.</param>
 		/// <returns>возвращает созданного пользователя.</returns>
-		public User Create(int id = 0)
+		public User Create(int name)
 		{
 			using (var ctx = GetContext())
 			{
 				try
 				{
 					var set = ctx.Set<User>();
-					var user = set.FirstOrDefault(u => u.Name == id);
+					var user = set.FirstOrDefault(u => u.Name == name);
 
 					// Если пользователь с таким идентификатором в базе не найден, создадим нового.
 					if (user == null) user = set.Create();
 
+					user.Name = name;
 					user.Password = Guid.NewGuid();
 
 					// Добавляем в контекст только если создан новый пользователь.

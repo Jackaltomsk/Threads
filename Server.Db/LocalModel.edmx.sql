@@ -2,13 +2,11 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/19/2015 17:13:48
+-- Date Created: 08/21/2015 20:21:06
 -- Generated from EDMX file: D:\projects\Test\Server.Db\LocalModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
-GO
-USE [LocalDb];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -41,7 +39,7 @@ CREATE TABLE [dbo].[Coordinates] (
     [Id] bigint IDENTITY(1,1) NOT NULL,
     [Latitude] decimal(9,6)  NOT NULL,
     [Longtitude] decimal(9,6)  NOT NULL,
-    [UsersId] bigint  NOT NULL,
+    [UserId] bigint  NOT NULL,
     [Date] datetime  NOT NULL
 );
 GO
@@ -49,7 +47,8 @@ GO
 -- Creating table 'Users'
 CREATE TABLE [dbo].[Users] (
     [Id] bigint IDENTITY(1,1) NOT NULL,
-    [Password] uniqueidentifier  NOT NULL
+    [Password] uniqueidentifier  NOT NULL,
+    [Name] int  NOT NULL
 );
 GO
 
@@ -73,10 +72,10 @@ GO
 -- Creating all FOREIGN KEY constraints
 -- --------------------------------------------------
 
--- Creating foreign key on [UsersId] in table 'Coordinates'
+-- Creating foreign key on [UserId] in table 'Coordinates'
 ALTER TABLE [dbo].[Coordinates]
 ADD CONSTRAINT [FK_UsersCoordinates]
-    FOREIGN KEY ([UsersId])
+    FOREIGN KEY ([UserId])
     REFERENCES [dbo].[Users]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -85,7 +84,7 @@ GO
 -- Creating non-clustered index for FOREIGN KEY 'FK_UsersCoordinates'
 CREATE INDEX [IX_FK_UsersCoordinates]
 ON [dbo].[Coordinates]
-    ([UsersId]);
+    ([UserId]);
 GO
 
 -- --------------------------------------------------

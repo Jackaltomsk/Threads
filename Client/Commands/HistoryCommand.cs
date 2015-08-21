@@ -31,7 +31,7 @@
 		{
 			var historyDto = new HistoryCoordinatesDto
 							{
-								UserId = int.Parse(_commandArguments[0]),
+								UserName = int.Parse(_commandArguments[0]),
 								StartDate = DateTimeConverter.Convert(_commandArguments[1]),
 								EndDate = DateTimeConverter.Convert(_commandArguments[2])
 							};
