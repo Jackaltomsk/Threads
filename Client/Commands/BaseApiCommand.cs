@@ -49,7 +49,7 @@
 		/// Параметры для отправки.
 		/// </summary>
 		protected object _bodyParameters;
-
+		
 		/// <summary>
 		/// Проверяет, валидна ли команда для данного запроса.
 		/// </summary>
@@ -172,7 +172,8 @@
 		/// <summary>
 		/// Реализует останов команды.
 		/// </summary>
-		public virtual void Stop()
+		/// <param name="previousCommand">Предыдущая команда.</param>
+		public virtual void Stop(BaseApiCommand previousCommand = null)
 		{
 			return;
 		}

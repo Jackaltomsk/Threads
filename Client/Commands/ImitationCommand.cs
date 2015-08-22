@@ -4,14 +4,14 @@
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Net.Http;
+	using System.Net.Http.Formatting;
+	using System.Net.Http.Headers;
 	using System.Threading;
 
 	using Client.Formatters;
 
 	using Dto;
 	using Dto.Converters;
-
-	using global::IoC;
 
 	using Logging;
 
@@ -60,37 +60,46 @@
 				var userName = i;
 				var thread = new Thread(() => Work(userName, baseAdress, startDate)) { IsBackground = true };
 				_threads.Add(thread);
-				thread.Start();
 			}
+
+			_threads.ForEach(t => t.Start());
 
 			return new string[] { };
 		}
 
 		/// <summary>
-		/// 
+		/// Реализует выполнение работы по имитации действий пользователей.
 		/// </summary>
-		/// <param name="userName"></param>
-		/// <param name="baseAdress"></param>
-		/// <param name="startDate"></param>
+		/// <param name="userName">Имя пользователя.</param>
+		/// <param name="baseAdress">Адрес сервиса.</param>
+		/// <param name="startDate">Дата добавления координат, из команды.</param>
 		private void Work(int userName, string baseAdress, DateTime startDate)
 		{
-			UserDto user;
-
 			try
 			{
+				UserDto user;
+				
+				// Используем протобуф для четных пользователей.
+				var useProtobuf = (userName % 2) == 0;
+
 				using (var client = new HttpClient())
 				{
+					if (useProtobuf)
+						client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-protobuf"));
+
 					var createQquery = string.Format(_queryFormat, userName);
 					client.BaseAddress = new Uri(new Uri(baseAdress), createQquery);
 					var data = client.GetAsync(client.BaseAddress).ContinueWith(
-								(t) => t.Result.Content.ReadAsAsync(_returnType, new[] { FormatterFactory.CreateJsonFormatter() }).Result)
+								(t) => t.Result.Content.ReadAsAsync(_returnType, new MediaTypeFormatter[] {  FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result)
 							.Result;
-
+					
 					user = (UserDto)data;
 
 					Console.WriteLine(user);
+					Logger.Trace(user.ToString());
 				}
 
+				// Случайные числа для координат.
 				var random = new Random(user.Name);
 				var lat = random.NextDouble();
 				var lng = random.NextDouble();
@@ -100,19 +109,29 @@
 					var parameters = new CoordinatesDto
 									{
 										Date = startDate,
-										Latitude = (decimal)(lat - random.NextDouble()),
-										Longtitude = (decimal)(lng - random.NextDouble()),
+										Latitude = (decimal)((lat - random.NextDouble()) * 90),
+										Longtitude = (decimal)((lng - random.NextDouble()) * 180),
 										UserId = user.Id
 									};
 
 					using (var client = new HttpClient())
 					{
+						if (useProtobuf)
+							client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-protobuf"));
+
 						client.BaseAddress = new Uri(new Uri(baseAdress), _coordsPutFormat);
 						var data = client.PutAsync(client.BaseAddress, parameters, FormatterFactory.CreateJsonFormatter())
-								.ContinueWith(t => t.Result.Content.ReadAsAsync(_coordsReturnType, new[] { FormatterFactory.CreateJsonFormatter() }))
-								.Result.Result;
+								.ContinueWith(t => t.Result.Content.ReadAsAsync(_coordsReturnType,  new MediaTypeFormatter[] {  FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result)
+								.Result;
 
-						Console.WriteLine(string.Format("Добавлена запись координат, пользователь {0}.", userName));
+						if ((int)data == 1)
+						{
+							var message = string.Format("Добавлена запись координат, пользователь {0}.", userName);
+#if DEBUG
+							Console.WriteLine(message);
+#endif
+							Logger.Trace(message);
+						}
 					}
 
 					Thread.Sleep(1000);
@@ -124,7 +143,7 @@
 			}
 		}
 
-		public override void Stop()
+		public override void Stop(BaseApiCommand previuosCommand = null)
 		{
 			foreach (var thread in _threads)
 			{

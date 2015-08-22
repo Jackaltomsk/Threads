@@ -15,6 +15,8 @@
 
 	using Server.Db;
 
+	using WebApiContrib.Formatting;
+
 	public class Startup
 	{
 		// This method is required by Katana:
@@ -37,6 +39,7 @@
 			config.Routes.MapHttpRoute("DefaultId", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 			config.Routes.MapHttpRoute("DefaultAction", "api/{controller}/{action}/{id}", new { id = RouteParameter.Optional });
 
+			config.Formatters.Add(new ProtoBufFormatter());
 			config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
 			
 			var settings = config.Formatters.JsonFormatter.SerializerSettings;

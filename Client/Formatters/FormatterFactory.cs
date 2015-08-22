@@ -5,6 +5,8 @@ namespace Client.Formatters
 
 	using Dto.Converters;
 
+	using WebApiContrib.Formatting;
+
 	/// <summary>
 	/// Содержит в себе методы создания форматтеров.
 	/// </summary>
@@ -19,6 +21,16 @@ namespace Client.Formatters
 			var formatter = new JsonMediaTypeFormatter();
 			formatter.SerializerSettings.Converters.Add(new DateTimeConverter());
 
+			return formatter;
+		}
+
+		/// <summary>
+		/// Реализует создание protobuf-форматтера.
+		/// </summary>
+		/// <returns>Возвращает protobuf-форматтер.</returns>
+		public static ProtoBufFormatter CreateProtoBufFormatter()
+		{
+			var formatter = new ProtoBufFormatter();
 			return formatter;
 		}
 	}
