@@ -3,12 +3,16 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Globalization;
+	using System.Net;
 	using System.Net.Http;
+	using System.Net.Http.Headers;
 	using System.Threading.Tasks;
 
 	using Client.Formatters;
 
 	using Dto.Converters;
+
+	using Logging;
 
 	/// <summary>
 	/// Абстрактный класс команды-запроса к сервису.
@@ -49,6 +53,11 @@
 		/// Параметры для отправки.
 		/// </summary>
 		protected object _bodyParameters;
+
+		/// <summary>
+		/// Аутентификационный токен.
+		/// </summary>
+		protected string _token;
 		
 		/// <summary>
 		/// Проверяет, валидна ли команда для данного запроса.
@@ -128,45 +137,66 @@
 		/// <returns>Возвращает ответ сервиса.</returns>
 		public virtual string[] ProcessRequest(string baseAdress)
 		{
-			var query = string.Format(_queryFormat, _commandArguments);
-
-			using (var client = new HttpClient())
+			try
 			{
-				client.BaseAddress = new Uri(new Uri(baseAdress), query);
-				
-				Task<HttpResponseMessage> response;
+				var query = string.Format(_queryFormat, _commandArguments);
 
-				switch (_method)
+				using (var client = new HttpClient())
 				{
-					case RequestMethod.GET:
-					{
-						response = client.GetAsync(client.BaseAddress);
-						break;
-					}
-					case RequestMethod.POST:
-					{
-						response = client.PostAsync(client.BaseAddress, _bodyParameters, FormatterFactory.CreateJsonFormatter());
-						break;
-					}
-					case RequestMethod.PUT:
-					{
-						response = client.PutAsync(client.BaseAddress, _bodyParameters, FormatterFactory.CreateJsonFormatter());
-						break;
-					}
-					case RequestMethod.DELETE:
-					{
-						response = client.DeleteAsync(client.BaseAddress);
-						break;
-					}
-					default:
-					{
-						throw new NotImplementedException("Не реализована обработка типа: " + _method);
-					}
-				}
+					client.BaseAddress = new Uri(new Uri(baseAdress), query);
 
-				var data = response.ContinueWith(t =>t.Result.Content.ReadAsAsync(_returnType, new[] { FormatterFactory.CreateJsonFormatter() }).Result).Result;
-				return this.ReturnTypeToString(data);
+					Task<HttpResponseMessage> response;
+
+					switch (_method)
+					{
+						case RequestMethod.GET:
+							{
+								response = client.GetAsync(client.BaseAddress);
+								break;
+							}
+						case RequestMethod.POST:
+							{
+								response = client.PostAsync(client.BaseAddress, _bodyParameters, FormatterFactory.CreateJsonFormatter());
+								break;
+							}
+						case RequestMethod.PUT:
+							{
+								response = client.PutAsync(client.BaseAddress, _bodyParameters, FormatterFactory.CreateJsonFormatter());
+								break;
+							}
+						case RequestMethod.DELETE:
+							{
+								response = client.DeleteAsync(client.BaseAddress);
+								break;
+							}
+						default:
+							{
+								throw new NotImplementedException("Не реализована обработка типа: " + _method);
+							}
+					}
+
+					if (!string.IsNullOrEmpty(_token))
+						client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token); 
+
+					var resp = response.Result;
+
+					if (resp.StatusCode == HttpStatusCode.OK)
+					{
+						var data = resp.Content.ReadAsAsync(_returnType, new[] { FormatterFactory.CreateJsonFormatter() }).Result;
+						return this.ReturnTypeToString(data);
+					}
+					
+					return new[] { "Запрос вернул код: " + resp.StatusCode };
+					
+				}
 			}
+			catch (AggregateException ex)
+			{
+				Console.WriteLine(string.Format("Ошибка выполнения команды {0}: {1}", this._verb, ex.InnerException.Message));
+				Logger.Error("Ошибка выполнения команды.", ex.InnerException);
+			}
+
+			return new string[] { };
 		}
 
 		/// <summary>

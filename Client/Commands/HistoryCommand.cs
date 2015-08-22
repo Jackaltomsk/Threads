@@ -17,7 +17,7 @@
 			this._argumentTypes = new[] { typeof(int), typeof(DateTime), typeof(DateTime) };
 			this._verb = "history";
 			_commandArguments = new List<string>(_argumentTypes.Length);
-			_queryFormat = "/api/coordinates/history/get";
+			_queryFormat = "/api/coordinates/history";
 			_returnType = typeof(CoordinatesDto[]);
 			_method = RequestMethod.POST;
 		}
@@ -35,6 +35,8 @@
 								StartDate = DateTimeConverter.Convert(_commandArguments[1]),
 								EndDate = DateTimeConverter.Convert(_commandArguments[2])
 							};
+
+			_token = AuthClient.GetTokenFromCache(historyDto.UserName);
 
 			return historyDto;
 		}

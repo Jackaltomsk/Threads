@@ -58,6 +58,7 @@
 		/// </summary>
 		/// <param name="requetsDto">Параметры запроса истории координат.</param>
 		/// <returns>Возвращает сущность пользователя.</returns>
+		[Authorize]
 		[HttpPost]
 		[Route("history")]
 		public IHttpActionResult History([FromBody]HistoryCoordinatesDto requetsDto)

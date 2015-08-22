@@ -3,6 +3,7 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Net;
 	using System.Net.Http;
 	using System.Net.Http.Formatting;
 	using System.Net.Http.Headers;
@@ -89,19 +90,21 @@
 
 					var createQquery = string.Format(_queryFormat, userName);
 					client.BaseAddress = new Uri(new Uri(baseAdress), createQquery);
-					var data = client.GetAsync(client.BaseAddress).ContinueWith(t => 
-						t.Result.Content.ReadAsAsync(_returnType, new MediaTypeFormatter[] { FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result).
-						Result;
+					
+					var response = client.GetAsync(client.BaseAddress).Result;
+
+					if (response.StatusCode != HttpStatusCode.OK) 
+						return;
+
+					var data = response.Content.ReadAsAsync(_returnType, new MediaTypeFormatter[] { FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result;
 
 					user = (UserDto)data;
 
 					Console.WriteLine(user);
 					Logger.Trace(user.ToString());
 				}
-
-				var authClient = new AuthClient(baseAdress);
-				var tokenDictionary = authClient.GetTokenDictionary(user.Name, user.Password).Result;
-				var token = tokenDictionary["access_token"];
+				
+				var token = AuthClient.GetToken(baseAdress, user.Name, user.Password).Result;
 
 				// Случайные числа для координат.
 				var random = new Random(user.Name);
@@ -126,9 +129,12 @@
 						client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); 
 
 						client.BaseAddress = new Uri(new Uri(baseAdress), _coordsPutFormat);
-						var data = client.PutAsync(client.BaseAddress, parameters, useProtobuf ? (MediaTypeFormatter)FormatterFactory.CreateProtoBufFormatter() : FormatterFactory.CreateJsonFormatter())
-								.ContinueWith(t => t.Result.Content.ReadAsAsync(_coordsReturnType, new MediaTypeFormatter[] { FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result).
-								Result;
+						var response = client.PutAsync(client.BaseAddress, parameters, useProtobuf ? (MediaTypeFormatter)FormatterFactory.CreateProtoBufFormatter() : FormatterFactory.CreateJsonFormatter()).Result;
+
+						if (response.StatusCode != HttpStatusCode.OK)
+							return;
+
+						var data = response.Content.ReadAsAsync(_coordsReturnType, new MediaTypeFormatter[] { FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result;
 
 						if ((int)data == 1)
 						{
@@ -146,8 +152,8 @@
 			catch (ThreadAbortException){}
 			catch (AggregateException ex)
 			{
-				Console.WriteLine(ex.InnerExceptions[0].Message);
-				Logger.Error("Ошибка имитации.", ex.InnerExceptions[0]);
+				Console.WriteLine(ex.InnerException.Message);
+				Logger.Error("Ошибка имитации.", ex.InnerException);
 			}
 			catch (Exception ex)
 			{
