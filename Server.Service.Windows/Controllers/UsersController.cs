@@ -19,7 +19,7 @@
 		/// <summary>
 		/// Репозиторий пользователей.
 		/// </summary>
-		private UsersRepository _rep;
+		private readonly UsersRepository _rep;
 
 		public UsersController()
 		{

@@ -35,10 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LightInject, Version=3.0.2.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LightInject.3.0.2.7\lib\net45\LightInject.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -83,10 +79,6 @@
     <ProjectReference Include="..\Dto\Dto.csproj">
       <Project>{C0D15E07-C630-40A1-A4C2-1A63957322D3}</Project>
       <Name>Dto</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\IoC\IoC.csproj">
-      <Project>{B3B10535-24BA-4511-998D-F0628BAC4D70}</Project>
-      <Name>IoC</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.csproj">
       <Project>{8B68908B-13E9-46EF-B35B-7CF8949CDF0F}</Project>

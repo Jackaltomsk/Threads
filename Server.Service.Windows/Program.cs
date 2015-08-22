@@ -10,7 +10,7 @@
 	{
 		static void Main(string[] args)
 		{
-			string url = "http://localhost:9000";
+			var url = "http://localhost:9000";
 
 			using (WebApp.Start<Startup>(url))
 			{

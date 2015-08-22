@@ -20,7 +20,7 @@
 		/// <summary>
 		/// Репозиторий пользователей.
 		/// </summary>
-		private CoordinatesRepository _rep;
+		private readonly CoordinatesRepository _rep;
 
 		public CoordinatesController()
 		{

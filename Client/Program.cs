@@ -19,8 +19,7 @@
 				var created = (BaseApiCommand)Activator.CreateInstance(cmm);
 				createdCommands.Add(created);
 			}
-			
-			
+
 			Console.WriteLine("Введите команду:");
 			var input = string.Empty;
 			BaseApiCommand currentCommand = null;

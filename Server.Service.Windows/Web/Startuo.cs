@@ -1,6 +1,5 @@
 ﻿namespace Server.Service.Windows.Web
 {
-	using System.Collections.Generic;
 	using System.Net.Http.Headers;
 	using System.Web.Http;
 
