@@ -51,6 +51,35 @@
 		}
 
 		/// <summary>
+		/// Реализует проверку валидности пользователя.
+		/// </summary>
+		/// <param name="userName">Имя пользователя.</param>
+		/// <param name="password">Пароль.</param>
+		/// <returns>Возвращает признак валидности имени пользователя/пароля.</returns>
+		public bool IsUserValid(int userName, Guid password)
+		{
+			using (var ctx = GetContext())
+			{
+				try
+				{
+					var set = ctx.Set<User>();
+					var user = set.FirstOrDefault(u => u.Name == userName && u.Password == password);
+
+					return user != null;
+				}
+				catch (DbEntityValidationException)
+				{
+					var errors = ctx.GetValidationErrors().ToList();
+
+					errors.ForEach(e => e.ValidationErrors.ToList()
+						.ForEach(r => Logger.Error(string.Format("Ошибка валидации модели: сущность {0}, свойство {1}, ошибка {2}", e.Entry.Entity, r.PropertyName, r.ErrorMessage))));
+
+					throw;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Реализует удаление пользователей.
 		/// </summary>
 		/// <param name="users">Массив пользователей.</param>

@@ -78,26 +78,30 @@
 			try
 			{
 				UserDto user;
-				
+
 				// Используем протобуф для четных пользователей.
 				var useProtobuf = (userName % 2) == 0;
 
 				using (var client = new HttpClient())
 				{
-					if (useProtobuf)
+					if (useProtobuf) 
 						client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-protobuf"));
 
 					var createQquery = string.Format(_queryFormat, userName);
 					client.BaseAddress = new Uri(new Uri(baseAdress), createQquery);
-					var data = client.GetAsync(client.BaseAddress).ContinueWith(
-								(t) => t.Result.Content.ReadAsAsync(_returnType, new MediaTypeFormatter[] {  FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result)
-							.Result;
-					
+					var data = client.GetAsync(client.BaseAddress).ContinueWith(t => 
+						t.Result.Content.ReadAsAsync(_returnType, new MediaTypeFormatter[] { FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result).
+						Result;
+
 					user = (UserDto)data;
 
 					Console.WriteLine(user);
 					Logger.Trace(user.ToString());
 				}
+
+				var authClient = new AuthClient(baseAdress);
+				var tokenDictionary = authClient.GetTokenDictionary(user.Name, user.Password).Result;
+				var token = tokenDictionary["access_token"];
 
 				// Случайные числа для координат.
 				var random = new Random(user.Name);
@@ -107,22 +111,24 @@
 				while (true)
 				{
 					var parameters = new CoordinatesDto
-									{
-										Date = startDate,
-										Latitude = (decimal)((lat - random.NextDouble()) * 90),
-										Longtitude = (decimal)((lng - random.NextDouble()) * 180),
-										UserId = user.Id
-									};
+										{
+											Date = startDate,
+											Latitude = (decimal)((lat - random.NextDouble()) * 90),
+											Longtitude = (decimal)((lng - random.NextDouble()) * 180),
+											UserId = user.Id
+										};
 
 					using (var client = new HttpClient())
 					{
-						if (useProtobuf)
+						if (useProtobuf) 
 							client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-protobuf"));
 
+						client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); 
+
 						client.BaseAddress = new Uri(new Uri(baseAdress), _coordsPutFormat);
-						var data = client.PutAsync(client.BaseAddress, parameters, FormatterFactory.CreateJsonFormatter())
-								.ContinueWith(t => t.Result.Content.ReadAsAsync(_coordsReturnType,  new MediaTypeFormatter[] {  FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result)
-								.Result;
+						var data = client.PutAsync(client.BaseAddress, parameters, useProtobuf ? (MediaTypeFormatter)FormatterFactory.CreateProtoBufFormatter() : FormatterFactory.CreateJsonFormatter())
+								.ContinueWith(t => t.Result.Content.ReadAsAsync(_coordsReturnType, new MediaTypeFormatter[] { FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result).
+								Result;
 
 						if ((int)data == 1)
 						{
@@ -137,8 +143,15 @@
 					Thread.Sleep(1000);
 				}
 			}
+			catch (ThreadAbortException){}
+			catch (AggregateException ex)
+			{
+				Console.WriteLine(ex.InnerExceptions[0].Message);
+				Logger.Error("Ошибка имитации.", ex.InnerExceptions[0]);
+			}
 			catch (Exception ex)
 			{
+				Console.WriteLine(ex.Message);
 				Logger.Error("Ошибка имитации.", ex);
 			}
 		}

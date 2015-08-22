@@ -42,7 +42,7 @@
 		protected override string[] ReturnTypeToString(object data)
 		{
 			var coordinates = (CoordinatesDto[])data;
-			return coordinates.Select(c => c.ToString()).ToArray();
+			return coordinates.Length > 1 ? coordinates.Select(c => c.ToString()).ToArray() : new[] { "Не найдено ни одной записи." };
 		}
 	}
 }

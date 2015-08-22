@@ -2,21 +2,33 @@
 {
 	using System;
 
-	using Microsoft.Owin.Hosting;
-
 	using Server.Service.Windows.Web;
 
-	class Program
+	using Topshelf;
+
+	public class Program
 	{
 		static void Main(string[] args)
 		{
-			var url = "http://localhost:9000";
+			var service = new WebApiService();
+			service.Start();
+			Console.ReadLine();
+			service.Stop();
 
-			using (WebApp.Start<Startup>(url))
+			/*HostFactory.Run(x =>
 			{
-				Console.WriteLine("Нажмите Enter для выхода.");
-				Console.ReadLine();
-			}
+				x.Service<WebApiService>(s =>
+				{
+					s.ConstructUsing(name => new WebApiService());
+					s.WhenStarted(svc => svc.Start());
+					s.WhenStopped(svc => svc.Stop());
+				});
+
+				x.RunAsLocalSystem();
+				x.SetDescription("Тестовый сервис для эмуляции нагрузки");
+				x.SetDisplayName("Сервис GPS координат");
+				x.SetServiceName("WebApiService");
+			}); */
 		}
 	}
 }

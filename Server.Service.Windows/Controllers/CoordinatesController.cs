@@ -1,7 +1,6 @@
 ﻿namespace Server.Service.Windows.Controllers
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Linq;
 	using System.Web.Http;
 
@@ -33,6 +32,7 @@
 		/// </summary>
 		/// <param name="coordsDto">Координаты для добавления.</param>
 		/// <returns>Возвращает сущность пользователя.</returns>
+		[Authorize]
 		[HttpPut]
 		[Route("put")]
 		public IHttpActionResult Create([FromBody]CoordinatesDto coordsDto)
@@ -59,7 +59,7 @@
 		/// <param name="requetsDto">Параметры запроса истории координат.</param>
 		/// <returns>Возвращает сущность пользователя.</returns>
 		[HttpPost]
-		[Route("history/get")]
+		[Route("history")]
 		public IHttpActionResult History([FromBody]HistoryCoordinatesDto requetsDto)
 		{
 			if (requetsDto == null)

@@ -19,6 +19,7 @@ namespace Dto
 		/// <summary>
 		/// Номер пользователя.
 		/// </summary>
+		[ProtoMember(2)]
 		public int Name { get; set; }
 
 		public override string ToString()

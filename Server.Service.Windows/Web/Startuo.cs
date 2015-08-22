@@ -1,5 +1,6 @@
 ﻿namespace Server.Service.Windows.Web
 {
+	using System;
 	using System.Net.Http.Headers;
 	using System.Web.Http;
 
@@ -7,6 +8,9 @@
 
 	using Dto;
 	using Dto.Converters;
+
+	using Microsoft.Owin;
+	using Microsoft.Owin.Security.OAuth;
 
 	using Newtonsoft.Json;
 
@@ -18,11 +22,11 @@
 
 	public class Startup
 	{
-		// This method is required by Katana:
 		public void Configuration(IAppBuilder app)
 		{
-			var webApiConfiguration = ConfigureWebApi();
-
+			ConfigureAuth(app);
+			
+			var webApiConfiguration = this.ConfigureWebApi();
 			// Use the extension method provided by the WebApi.Owin library:
 			app.UseWebApi(webApiConfiguration);
 
@@ -47,6 +51,21 @@
 			settings.Converters.Add(new DateTimeConverter());
 			
 			return config;
+		}
+
+		private void ConfigureAuth(IAppBuilder app)
+		{
+			var oAuthOptions = new OAuthAuthorizationServerOptions
+			{
+				TokenEndpointPath = new PathString("/Token"),
+				Provider = new OAuthProvider(),
+				AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+
+				// Only do this for demo!!
+				AllowInsecureHttp = true
+			};
+			app.UseOAuthAuthorizationServer(oAuthOptions);
+			app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 		}
 	}
 }
