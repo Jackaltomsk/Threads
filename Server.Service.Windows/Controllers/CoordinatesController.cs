@@ -2,6 +2,7 @@
 {
 	using System;
 	using System.Linq;
+	using System.Threading.Tasks;
 	using System.Web.Http;
 
 	using AutoMapper;
@@ -13,6 +14,7 @@
 	using Server.Db;
 	using Server.Db.Infrastructure;
 
+	[Authorize]
 	[RoutePrefix("api/coordinates")]
 	public class CoordinatesController : ApiController
 	{
@@ -32,10 +34,9 @@
 		/// </summary>
 		/// <param name="coordsDto">Координаты для добавления.</param>
 		/// <returns>Возвращает сущность пользователя.</returns>
-		[Authorize]
 		[HttpPut]
 		[Route("put")]
-		public IHttpActionResult Create([FromBody]CoordinatesDto coordsDto)
+		public async Task<IHttpActionResult> Create([FromBody]CoordinatesDto coordsDto)
 		{
 			if (coordsDto == null)
 				return BadRequest("Не передан необходимый параметр.");
@@ -43,7 +44,7 @@
 			try
 			{
 				var coords = Mapper.Map<Coordinates>(coordsDto);
-				var count = _rep.Put(coords);
+				var count = await _rep.PutAsync(coords);
 				return Ok(count);
 			}
 			catch (Exception ex)
@@ -58,17 +59,16 @@
 		/// </summary>
 		/// <param name="requetsDto">Параметры запроса истории координат.</param>
 		/// <returns>Возвращает сущность пользователя.</returns>
-		[Authorize]
 		[HttpPost]
 		[Route("history")]
-		public IHttpActionResult History([FromBody]HistoryCoordinatesDto requetsDto)
+		public async Task<IHttpActionResult> History([FromBody]HistoryCoordinatesDto requetsDto)
 		{
 			if (requetsDto == null)
 				return BadRequest("Не передан необходимый параметр.");
 
 			try
 			{
-				var coords = _rep.Get(requetsDto.UserName, requetsDto.StartDate, requetsDto.EndDate);
+				var coords = await _rep.GetAsync(requetsDto.UserName, requetsDto.StartDate, requetsDto.EndDate);
 				var coordsDto = coords.Select(Mapper.Map<CoordinatesDto>).ToArray();
 
 				return Ok(coordsDto);

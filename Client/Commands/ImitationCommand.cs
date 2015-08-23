@@ -3,7 +3,6 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using System.Net;
 	using System.Net.Http;
 	using System.Net.Http.Formatting;
 	using System.Net.Http.Headers;
@@ -93,8 +92,7 @@
 					
 					var response = client.GetAsync(client.BaseAddress).Result;
 
-					if (response.StatusCode != HttpStatusCode.OK) 
-						return;
+					if (!response.IsSuccessStatusCode) return;
 
 					var data = response.Content.ReadAsAsync(_returnType, new MediaTypeFormatter[] { FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result;
 
@@ -131,8 +129,7 @@
 						client.BaseAddress = new Uri(new Uri(baseAdress), _coordsPutFormat);
 						var response = client.PutAsync(client.BaseAddress, parameters, useProtobuf ? (MediaTypeFormatter)FormatterFactory.CreateProtoBufFormatter() : FormatterFactory.CreateJsonFormatter()).Result;
 
-						if (response.StatusCode != HttpStatusCode.OK)
-							return;
+						if (!response.IsSuccessStatusCode) return;
 
 						var data = response.Content.ReadAsAsync(_coordsReturnType, new MediaTypeFormatter[] { FormatterFactory.CreateJsonFormatter(), FormatterFactory.CreateProtoBufFormatter() }).Result;
 

@@ -2,6 +2,7 @@
 {
 	using System;
 
+	using Server.Db.Infrastructure;
 	using Server.Service.Windows.Web;
 
 	using Topshelf;
@@ -10,12 +11,15 @@
 	{
 		static void Main(string[] args)
 		{
+			var warmupRep = new WarmUpRepository();
+			warmupRep.WarmUp();
+#if DEBUG	
 			var service = new WebApiService();
 			service.Start();
 			Console.ReadLine();
 			service.Stop();
-
-			/*HostFactory.Run(x =>
+#else
+			HostFactory.Run(x =>
 			{
 				x.Service<WebApiService>(s =>
 				{
@@ -28,7 +32,8 @@
 				x.SetDescription("Тестовый сервис для эмуляции нагрузки");
 				x.SetDisplayName("Сервис GPS координат");
 				x.SetServiceName("WebApiService");
-			}); */
+			});
+#endif
 		}
 	}
 }

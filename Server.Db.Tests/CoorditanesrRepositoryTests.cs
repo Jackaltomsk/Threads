@@ -10,22 +10,22 @@
 	public class UserRepositoryTests
 	{
 		[Test]
-		public void CoordinatesCreation()
+		public async void CoordinatesCreationAsync()
 		{
 			var coordsRep = new CoordinatesRepository();
 			var usersRep = new UsersRepository();
 
-			var user = usersRep.Create(1);
+			var user = await usersRep.CreateAsync(101);
 
 			var coords = new Coordinates { UserId = user.Id, Date = DateTime.Now };
-			var putCount = coordsRep.Put(coords);
+			var putCount = await coordsRep.PutAsync(coords);
 
 			try
 			{
 				Assert.That(putCount, Is.EqualTo(1));
 				Assert.That(coords.Id, Is.GreaterThan(0));
 
-				var getted = coordsRep.Get(user.Name);
+				var getted = await coordsRep.GetAsync(user.Name);
 
 				Assert.That(getted.Length, Is.EqualTo(1));
 				Assert.That(getted[0].Id, Is.EqualTo(coords.Id));

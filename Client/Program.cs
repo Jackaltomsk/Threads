@@ -11,8 +11,8 @@
 	{
 		private static void Main(string[] args)
 		{
-			var commandTypes =
-				Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(BaseApiCommand))).ToArray();
+			// Находим команды в сборке.
+			var commandTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(BaseApiCommand))).ToArray();
 			var createdCommands = new List<BaseApiCommand>(commandTypes.Length);
 
 			foreach (var cmm in commandTypes)
@@ -22,6 +22,7 @@
 			}
 
 			Console.WriteLine("Введите команду:");
+			
 			var input = string.Empty;
 			BaseApiCommand currentCommand = null;
 

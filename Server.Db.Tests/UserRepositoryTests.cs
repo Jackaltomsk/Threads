@@ -10,16 +10,16 @@
 	public class CoorditanesrRepositoryTests
 	{
 		[Test]
-		public void UserCreation()
+		public async void UserCreationAsync()
 		{
 			var userRep = new UsersRepository();
-			var user = userRep.Create(1);
+			var user = await userRep.CreateAsync(102);
 
 			try
 			{
 				Assert.That(user.Id, Is.GreaterThan(0));
-				Assert.That(user.Name, Is.EqualTo(1));
-				var changedUser = userRep.Create(user.Name);
+				Assert.That(user.Name, Is.EqualTo(102));
+				var changedUser = await userRep.CreateAsync(user.Name);
 				
 				Assert.That(changedUser.Id, Is.EqualTo(user.Id));
 				Assert.That(changedUser.Password, Is.Not.EqualTo(user.Password));
@@ -32,19 +32,19 @@
 		}
 
 		[Test]
-		public void UserValidation()
+		public async void UserValidationAsync()
 		{
 			var userRep = new UsersRepository();
-			var user = userRep.Create(0);
+			var user = await userRep.CreateAsync(102);
 
 			try
 			{
 				Assert.That(user.Id, Is.GreaterThan(0));
-				Assert.That(user.Name, Is.EqualTo(0));
+				Assert.That(user.Name, Is.EqualTo(102));
 				
-				Assert.IsTrue(userRep.IsUserValid(user.Name, user.Password));
-				Assert.IsFalse(userRep.IsUserValid(user.Name + 1, user.Password));
-				Assert.IsFalse(userRep.IsUserValid(user.Name, Guid.Empty));
+				Assert.IsTrue(await userRep.IsUserValid(user.Name, user.Password));
+				Assert.IsFalse(await userRep.IsUserValid(user.Name + 1, user.Password));
+				Assert.IsFalse(await userRep.IsUserValid(user.Name, Guid.Empty));
 			}
 			finally
 			{

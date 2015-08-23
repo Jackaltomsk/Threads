@@ -20,14 +20,16 @@
 
 	using WebApiContrib.Formatting;
 
+	/// <summary>
+	/// Реализует конфигурирование OWIN-сервера.
+	/// </summary>
 	public class Startup
 	{
 		public void Configuration(IAppBuilder app)
 		{
 			ConfigureAuth(app);
 			
-			var webApiConfiguration = this.ConfigureWebApi();
-			// Use the extension method provided by the WebApi.Owin library:
+			var webApiConfiguration = ConfigureWebApi();
 			app.UseWebApi(webApiConfiguration);
 
 			Mapper.CreateMap<User, UserDto>();
@@ -42,9 +44,13 @@
 			config.Routes.MapHttpRoute("DefaultId", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 			config.Routes.MapHttpRoute("DefaultAction", "api/{controller}/{action}/{id}", new { id = RouteParameter.Optional });
 
+			// Добавляем протобуф-форматтер.
 			config.Formatters.Add(new ProtoBufFormatter());
+			
+			// Делаем json-форматтер прпиоритетным перед xml.
 			config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
 			
+			// Настраиваем обработку даты-времени в нужном формате.
 			var settings = config.Formatters.JsonFormatter.SerializerSettings;
 			settings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
 			settings.Formatting = Formatting.Indented;
@@ -53,6 +59,10 @@
 			return config;
 		}
 
+		/// <summary>
+		/// Реализует конфигурирование аутентификации.
+		/// </summary>
+		/// <param name="app">Строитель.</param>
 		private void ConfigureAuth(IAppBuilder app)
 		{
 			var oAuthOptions = new OAuthAuthorizationServerOptions
@@ -61,7 +71,7 @@
 				Provider = new OAuthProvider(),
 				AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
 
-				// Only do this for demo!!
+				// Сделано для демонстрации.
 				AllowInsecureHttp = true
 			};
 			app.UseOAuthAuthorizationServer(oAuthOptions);

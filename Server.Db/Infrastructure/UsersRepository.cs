@@ -1,8 +1,10 @@
 ﻿namespace Server.Db.Infrastructure
 {
 	using System;
+	using System.Data.Entity;
 	using System.Data.Entity.Validation;
 	using System.Linq;
+	using System.Threading.Tasks;
 
 	using Logging;
 
@@ -16,14 +18,14 @@
 		/// </summary>
 		/// <param name="name">Идентификатор пользователя.</param>
 		/// <returns>возвращает созданного пользователя.</returns>
-		public User Create(int name)
+		public async Task<User> CreateAsync(int name)
 		{
-			using (var ctx = GetContext())
+			using (var ctx = await GetContextAsync())
 			{
 				try
 				{
 					var set = ctx.Set<User>();
-					var user = set.FirstOrDefault(u => u.Name == name);
+					var user = await set.FirstOrDefaultAsync(u => u.Name == name);
 
 					// Если пользователь с таким идентификатором в базе не найден, создадим нового.
 					if (user == null) user = set.Create();
@@ -34,7 +36,7 @@
 					// Добавляем в контекст только если создан новый пользователь.
 					if (user.Id == 0) set.Add(user);
 
-					ctx.SaveChanges();
+					await ctx.SaveChangesAsync();
 
 					return user;
 				}
@@ -56,14 +58,14 @@
 		/// <param name="userName">Имя пользователя.</param>
 		/// <param name="password">Пароль.</param>
 		/// <returns>Возвращает признак валидности имени пользователя/пароля.</returns>
-		public bool IsUserValid(int userName, Guid password)
+		public async Task<bool> IsUserValid(int userName, Guid password)
 		{
-			using (var ctx = GetContext())
+			using (var ctx = await GetContextAsync())
 			{
 				try
 				{
 					var set = ctx.Set<User>();
-					var user = set.FirstOrDefault(u => u.Name == userName && u.Password == password);
+					var user = await set.FirstOrDefaultAsync(u => u.Name == userName && u.Password == password);
 
 					return user != null;
 				}
@@ -101,9 +103,7 @@
 					}
 
 					set.RemoveRange(filteredUsers);
-					ctx.SaveChanges();
-
-					return filteredUsers.Length;
+					return ctx.SaveChanges();
 				}
 				catch (DbEntityValidationException)
 				{

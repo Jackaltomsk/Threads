@@ -1,8 +1,10 @@
 ﻿namespace Server.Db.Infrastructure
 {
 	using System;
+	using System.Data.Entity;
 	using System.Data.Entity.Validation;
 	using System.Linq;
+	using System.Threading.Tasks;
 
 	using Logging;
 
@@ -14,18 +16,18 @@
 		/// <summary>
 		/// Реализует сохранение координат в БД.
 		/// </summary>
-		/// <param name="coordinates"></param>
+		/// <param name="coordinates">Координаты.</param>
 		/// <returns>Возвращает количество сохраненных записей.</returns>
-		public int Put(params Coordinates[] coordinates)
+		public async Task<int> PutAsync(params Coordinates[] coordinates)
 		{
-			using (var ctx = GetContext())
+			using (var ctx = await GetContextAsync())
 			{
 				try
 				{
 					var set = ctx.Set<Coordinates>();
 					set.AddRange(coordinates.Where(c => c != null));
 
-					return ctx.SaveChanges();
+					return await ctx.SaveChangesAsync();
 				}
 				catch (DbEntityValidationException)
 				{
@@ -46,9 +48,9 @@
 		/// <param name="intervalStart">Начало временного интервала.</param>
 		/// <param name="intervalEnd">Конец временного интервала.</param>
 		/// <returns>Возвращает координаты, удовлетворяющие запросу.</returns>
-		public Coordinates[] Get(int name, DateTime? intervalStart = null, DateTime? intervalEnd = null)
+		public async Task<Coordinates[]> GetAsync(int name, DateTime? intervalStart = null, DateTime? intervalEnd = null)
 		{
-			using (var ctx = GetContext())
+			using (var ctx = await GetContextAsync())
 			{
 				try
 				{
@@ -56,8 +58,7 @@
 					intervalStart = intervalStart ?? DateTime.MinValue;
 					intervalEnd = intervalEnd ?? DateTime.MaxValue;
 
-					var coords = set.Where(c => c.User.Name == name && (c.Date >= intervalStart && c.Date <= intervalEnd)).ToArray();
-
+					var coords = await set.Where(c => c.User.Name == name && (c.Date >= intervalStart && c.Date <= intervalEnd)).ToArrayAsync();
 					return coords;
 				}
 				catch (DbEntityValidationException)

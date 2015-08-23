@@ -1,6 +1,7 @@
 ﻿namespace Server.Service.Windows.Controllers
 {
 	using System;
+	using System.Threading.Tasks;
 	using System.Web.Http;
 
 	using AutoMapper;
@@ -34,13 +35,13 @@
 		/// <returns>Возвращает сущность пользователя.</returns>
 		[HttpGet]
 		[Route("create/{id:int}")]
-		public IHttpActionResult Create(int id)
+		public async Task<IHttpActionResult> CreateAsync(int id)
 		{
 			try
 			{
 				Logger.Trace(string.Format("Запрос на создание пользоватея/изменение пароля с именем [{0}].", id));
 
-				var user = _rep.Create(id);
+				var user = await _rep.CreateAsync(id);
 				var userDto = Mapper.Map<UserDto>(user);
 
 				return Ok(userDto);

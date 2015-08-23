@@ -145,6 +145,9 @@
 				{
 					client.BaseAddress = new Uri(new Uri(baseAdress), query);
 
+					if (!string.IsNullOrEmpty(_token))
+						client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token); 
+
 					Task<HttpResponseMessage> response;
 
 					switch (_method)
@@ -175,12 +178,9 @@
 							}
 					}
 
-					if (!string.IsNullOrEmpty(_token))
-						client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token); 
-
 					var resp = response.Result;
 
-					if (resp.StatusCode == HttpStatusCode.OK)
+					if (resp.IsSuccessStatusCode)
 					{
 						var data = resp.Content.ReadAsAsync(_returnType, new[] { FormatterFactory.CreateJsonFormatter() }).Result;
 						return this.ReturnTypeToString(data);
