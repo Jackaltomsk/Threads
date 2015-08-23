@@ -142,7 +142,13 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="install.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
+    <None Include="uninstall.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dto\Dto.csproj">

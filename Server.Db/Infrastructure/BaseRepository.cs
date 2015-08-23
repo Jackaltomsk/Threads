@@ -5,6 +5,8 @@
 
 	using global::IoC;
 
+	using Logging;
+
 	/// <summary>
 	/// Базовый репозиторий.
 	/// </summary>
@@ -18,7 +20,12 @@
 		public DbContext GetContext()
 		{
 			var container = LightInjectCore.Get();
-			return container.GetInstance<DbContext>();
+			var context = container.GetInstance<DbContext>();
+			context.Database.Connection.Open();
+
+			Logger.Trace("Создан контекст БД.");
+
+			return context;
 		}
 		
 		/// <summary>
@@ -27,6 +34,7 @@
 		/// <returns>Возвращает текущий контекст БД.</returns>
 		public async Task<DbContext> GetContextAsync()
 		{
+			Logger.Trace("Контекст БД запрошен асинхронно.");
 			return await Task.Run(() => this.GetContext());
 		}
 	}

@@ -101,9 +101,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LocalDb.mdf" />
+    <Content Include="LocalDb.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="LocalDb_log.ldf">
       <DependentUpon>LocalDb.mdf</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="LocalModel.edmx.sql" />
   </ItemGroup>

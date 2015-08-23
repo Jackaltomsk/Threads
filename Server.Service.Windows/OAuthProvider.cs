@@ -4,6 +4,8 @@
 	using System.Security.Claims;
 	using System.Threading.Tasks;
 
+	using Logging;
+
 	using Microsoft.Owin.Security.OAuth;
 
 	using Server.Db.Infrastructure;
@@ -25,10 +27,14 @@
 
 			if (!await userRep.IsUserValid(int.Parse(context.UserName), Guid.Parse(context.Password)))
 			{
+				Logger.Trace("Отказано в выдаче токена.");
+
 				context.SetError("invalid_grant", "Имя пользователя или пароль неправильны.");
 				context.Rejected();
 				return;
 			}
+
+			Logger.Trace("Токен выдан.");
 			
 			var identity = new ClaimsIdentity(context.Options.AuthenticationType);
 			identity.AddClaim(new Claim("user_name", context.UserName));

@@ -26,6 +26,7 @@
 		{
 			var container = LightInjectCore.Get();
 			_rep = container.GetInstance<UsersRepository>();
+			Logger.Trace("Создан контроллер.");
 		}
 		
 		/// <summary>
@@ -35,13 +36,13 @@
 		/// <returns>Возвращает сущность пользователя.</returns>
 		[HttpGet]
 		[Route("create/{id:int}")]
-		public async Task<IHttpActionResult> CreateAsync(int id)
+		public IHttpActionResult Create(int id)
 		{
 			try
 			{
 				Logger.Trace(string.Format("Запрос на создание пользоватея/изменение пароля с именем [{0}].", id));
 
-				var user = await _rep.CreateAsync(id);
+				var user = _rep.CreateAsync(id).Result;
 				var userDto = Mapper.Map<UserDto>(user);
 
 				return Ok(userDto);

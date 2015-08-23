@@ -2,6 +2,8 @@
 {
 	using System;
 
+	using Logging;
+
 	using Server.Db.Infrastructure;
 	using Server.Service.Windows.Web;
 
@@ -13,6 +15,8 @@
 		{
 			var warmupRep = new WarmUpRepository();
 			warmupRep.WarmUp();
+
+			Logger.Info("Cлужба запущена.");
 #if DEBUG	
 			var service = new WebApiService();
 			service.Start();

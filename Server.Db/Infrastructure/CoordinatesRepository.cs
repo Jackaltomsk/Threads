@@ -20,7 +20,7 @@
 		/// <returns>Возвращает количество сохраненных записей.</returns>
 		public async Task<int> PutAsync(params Coordinates[] coordinates)
 		{
-			using (var ctx = await GetContextAsync())
+			using (var ctx = await this.GetContextAsync())
 			{
 				try
 				{

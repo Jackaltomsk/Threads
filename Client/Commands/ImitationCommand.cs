@@ -55,7 +55,7 @@
 			var usersCount = int.Parse(_commandArguments[0]);
 			var startDate = DateTimeConverter.Convert(_commandArguments[1]);
 
-			for (var i = 0; i < usersCount; i++)
+			for (var i = 1; i <= usersCount; i++)
 			{
 				var userName = i;
 				var thread = new Thread(() => Work(userName, baseAdress, startDate)) { IsBackground = true };

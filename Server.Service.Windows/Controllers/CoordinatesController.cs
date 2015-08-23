@@ -11,6 +11,8 @@
 
 	using global::IoC;
 
+	using Logging;
+
 	using Server.Db;
 	using Server.Db.Infrastructure;
 
@@ -27,6 +29,7 @@
 		{
 			var container = LightInjectCore.Get();
 			_rep = container.GetInstance<CoordinatesRepository>();
+			Logger.Trace("Создан контроллер.");
 		}
 		
 		/// <summary>
@@ -36,7 +39,7 @@
 		/// <returns>Возвращает сущность пользователя.</returns>
 		[HttpPut]
 		[Route("put")]
-		public async Task<IHttpActionResult> Create([FromBody]CoordinatesDto coordsDto)
+		public IHttpActionResult Create([FromBody]CoordinatesDto coordsDto)
 		{
 			if (coordsDto == null)
 				return BadRequest("Не передан необходимый параметр.");
@@ -44,12 +47,14 @@
 			try
 			{
 				var coords = Mapper.Map<Coordinates>(coordsDto);
-				var count = await _rep.PutAsync(coords);
+				var count = _rep.PutAsync(coords).Result;
+
+				Logger.Trace("Добавлены координаты.");
 				return Ok(count);
 			}
 			catch (Exception ex)
 			{
-				Logging.Logger.Error("Ошибка добавления координат.", ex);
+				Logger.Error("Ошибка добавления координат.", ex);
 				return InternalServerError();
 			}
 		}
@@ -61,15 +66,16 @@
 		/// <returns>Возвращает сущность пользователя.</returns>
 		[HttpPost]
 		[Route("history")]
-		public async Task<IHttpActionResult> History([FromBody]HistoryCoordinatesDto requetsDto)
+		public IHttpActionResult History([FromBody]HistoryCoordinatesDto requetsDto)
 		{
 			if (requetsDto == null)
 				return BadRequest("Не передан необходимый параметр.");
 
 			try
 			{
-				var coords = await _rep.GetAsync(requetsDto.UserName, requetsDto.StartDate, requetsDto.EndDate);
+				var coords = _rep.GetAsync(requetsDto.UserName, requetsDto.StartDate, requetsDto.EndDate).Result;
 				var coordsDto = coords.Select(Mapper.Map<CoordinatesDto>).ToArray();
+				Logger.Trace("Запрошена история.");
 
 				return Ok(coordsDto);
 			}
